@@ -1,0 +1,26 @@
+﻿@model User
+@{
+    ViewBag.Title = "Login";
+}
+
+<div class=" container">
+    <div class="row justify-content-md-center">
+        <h2>Login</h2>
+    </div>
+    <form class="row g-3 col-4 col-md-2 container center-block">
+
+        <div class="row">
+            <div class="col-3">
+                @Html.LabelFor(m => m.UserName)
+            </div>
+            <div class="col-3">
+                @Html.DisplayFor(m => m.UserName)
+            </div>
+        </div>
+
+        <div class="row">
+
+            <button class="btn btn-primary">Enviar</button>
+        </div>
+    </form>
+</div>

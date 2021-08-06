@@ -1,0 +1,39 @@
+﻿
+@model ThesisCore.Models.Device
+@{
+    DAL helperDAL = new DAL();
+}
+@using (Html.BeginForm("DeviceController", "Home", new { someParam = Model.Id }, FormMethod.Post))
+{
+    <div class="card h-100" style="width: 18rem;">
+        <div class="card-header">
+            @Model.Name
+        </div>
+        <div class="card-body justify-content-sm-center">
+            <p class="card-text">@Model.Description</p>
+        </div>
+
+        <ul class="list-group list-group-flush">
+            @if (Model.Connected)
+            {
+                <li class="list-group-item">Estado: Conectado.</li>
+            }
+            else
+            {
+                <li class="list-group-item">Estado: Desconectado.</li>
+            }
+            @if (Model.IdUser != 0)
+            {
+                <li class="list-group-item">
+                    Usuario: @{WriteLiteral(((User)helperDAL.GetUser(Model.IdUser)).UserName);}
+                </li>
+            }
+        </ul>
+        @Html.Hidden("id", Model.Id)
+        <div class="card-footer ">
+            <div class="row justify-content-center">
+                <input class="btn btn-primary @(Model.IdUser != 0?"":"disaled")" type="submit" value="Ir al dispositivo" />
+            </div>
+        </div>
+    </div>
+}

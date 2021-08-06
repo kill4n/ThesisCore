@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<div class="container">
+    Puertos:<br />
+    @foreach (string puerto in ViewBag.Puertos)
+    {
+        @puerto<br />
+    }
+    <label>Data:</label>
+    @ViewBag.Data
+    <button class="button">Update</button>
+</div>
+
+<div class="target">
+    <partial name="_partialUART" />
+</div>
+
+<script type="text/javascript">
+
+    $(function(){
+        $('.button').on("click", function(){
+            $.post('@Url.Action("UpdatePartial", "Home")').always(function(){
+                $('.target').load('/HomeController/UpdatePartial');
+            })
+        });
+    });
+</script>
