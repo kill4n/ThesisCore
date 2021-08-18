@@ -10,6 +10,8 @@ namespace WebThesis.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public bool IsConnected { get; set; }
+        public bool IsActive { get; set; }
+        public long IdUser { get; set; }
         public int Location { get; set; }
         public string Image { get; set; }
         public string Controller { get; set; }

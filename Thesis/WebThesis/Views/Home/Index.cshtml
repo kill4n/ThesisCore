@@ -1,8 +1,21 @@
-﻿@{
+﻿@model List<Device>
+@{
     ViewData["Title"] = "Home Page";
 }
 
+
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Biomicrosystems</h1>
+
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        @foreach (Device device in Model)
+        {
+            <div class="col " style="margin-top:20px;">
+                @Html.Partial("_PartialDevice", device)
+            </div>
+        }
+    </div>
 </div>

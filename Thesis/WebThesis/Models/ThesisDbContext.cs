@@ -1,10 +1,18 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.Reflection;
+
 namespace WebThesis.Models
 {
-    public class ThesisDbContext
+    public class ThesisDbContext : DbContext
     {
+        public ThesisDbContext()
+        {
+            Database.EnsureCreatedAsync();
+        }
+
         static string database = "dbThesis.db";
-        public DbSet<Users> Users { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Data> Data { get; set; }
 
@@ -23,8 +31,8 @@ namespace WebThesis.Models
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Users>().ToTable("Users");
-            modelBuilder.Entity<Users>(entity => { entity.HasKey(e => e.Id); });
+            modelBuilder.Entity<User>().ToTable("Users");
+            modelBuilder.Entity<User>(entity => { entity.HasKey(e => e.Id); });
             modelBuilder.Entity<Device>().ToTable("Devices");
             modelBuilder.Entity<Device>(entity => { entity.HasKey(e => e.Id); });
             modelBuilder.Entity<Data>().ToTable("Data");

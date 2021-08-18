@@ -1,0 +1,39 @@
+﻿@using WebThesis.DAL
+@model Device
+@{
+    DALHelper helperDAL = new DALHelper();
+}
+@using (Html.BeginForm("DeviceController", "Home", FormMethod.Post))
+{
+    <div class="card h-100" style="width: 18rem;">
+        <div class="card-header">
+            @Model.Name
+        </div>
+        <div class="card-body justify-content-sm-center">
+            <p class="card-text">@Model.Description</p>
+        </div>
+
+        <ul class="list-group list-group-flush">
+            @if (Model.IsConnected)
+            {
+                <li class="list-group-item">Estado: Conectado.</li>
+            }
+            else
+            {
+                <li class="list-group-item">Estado: Desconectado.</li>
+            }
+            @if (Model.IdUser != 0)
+            {
+                <li class="list-group-item">
+                    Usuario: @{WriteLiteral(((User)helperDAL.GetUser(Model.IdUser)).UserName);}
+                </li>
+            }
+        </ul>
+        @Html.HiddenFor(model=>model.Controller)
+        <div class="card-footer ">
+            <div class="row justify-content-center">
+                <input class="btn btn-primary @(Model.IdUser != 0?"":"disabled")" type="submit" value="Ir al dispositivo" />
+            </div>
+        </div>
+    </div>
+}
