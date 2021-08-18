@@ -3,7 +3,7 @@ namespace WebThesis.Models
 {
     public class ThesisDbContext
     {
-        static string database = "db Thesis.db";
+        static string database = "dbThesis.db";
         public DbSet<Users> Users { get; set; }
         public DbSet<Device> Devices { get; set; }
         public DbSet<Data> Data { get; set; }
