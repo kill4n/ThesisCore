@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<link rel="stylesheet" href="~/css/Home.css" />
+
+<div class="body-container">
+    <div class="logo">
+        <img src="~/img/B10msBlanco.png" class="App-logo" alt="logo" />
+        <h1> | Remote devices</h1>
+    </div>
+    <h1 id="title">Remote devices</h1>
+    @Html.Hidden("RedirectTo", Url.Action("Potentiostat", "Home"));
+
+    <div class="container-card">
+        <div class="card">
+            <div class="imgBx" data-text="Potentiostato">
+                <img src="~/img/design.png" />
+            </div>
+            <div class="content">
+                <div>
+                    <h3>Potentiostato</h3>
+                    <p>Dispositivo para realizar mediciones electroquimicas.</p>
+                    <a id="Potentiostat">Acceder</a>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="imgBx" data-text="Analizador">
+                <img src="~/img/design.png" />
+            </div>
+            <div class="content">
+                <div>
+                    <h3>Analizador de Impedancias</h3>
+                    <p>Descripción de analizador de impedancias.</p>
+                    <a href="#">Acceder</a>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="imgBx" data-text="Equipo 3">
+                <img src="~/img/launch.png" />
+            </div>
+            <div class="content">
+                <div>
+                    <h3>Equipo de laboratorio</h3>
+                    <p>Breve descripcion del equipo de laboratorio.</p>
+                    <a href="#">Acceder</a>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="imgBx" data-text="Otros">
+                <img src="~/img/earn.png" />
+            </div>
+            <div class="content">
+                <div>
+                    <h3>Otros.</h3>
+                    <p>Cualquier otra información adicional.</p>
+                    <a href="#">Acceder</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <a class="btn" href="#">
+        Ver más ...
+    </a>
+</div>
+
+<script type="text/javascript">
+    $('#Potentiostat').click(() => {
+        var url = $("#RedirectTo").val();
+        window.location.href = url;
+    });
+</script>

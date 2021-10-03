@@ -1,0 +1,43 @@
+﻿@model UserViewModel
+@{
+    ViewData["Title"] = "Login Page";
+}
+
+<link rel="stylesheet" href="~/css/Login.css" />
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}
+<div class="col-12">
+    <div class="App-header">
+        <div class="logo-crop">
+            <img src="~/img/logo-blanco.png" class="App-logo" alt="logo" />
+        </div>
+        <div class="box">
+            @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+            {
+                @Html.ValidationSummary(true)
+
+                @Html.AntiForgeryToken()
+
+                <h1>Login</h1>
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @ViewBag.ErrorMessage
+                    </div>
+                }
+                @Html.TextBoxFor((m) => m.User)
+                @Html.ValidationMessageFor((m) => m.User)
+
+                @Html.PasswordFor((m) => m.Password)
+                @Html.ValidationMessageFor((m) => m.Password)
+                @*<input type="text" name="user" placeholder="Username" />
+            <input type="password" name="password" placeholder="Password" />*@
+                <input type="submit" value="Login" />
+            }
+        </div>
+    </div>
+
+</div>
