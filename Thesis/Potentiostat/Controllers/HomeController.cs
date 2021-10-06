@@ -64,8 +64,29 @@ namespace Potentiostat.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Register(User model)
         {
-
-            return View();
+            if (ModelState.IsValid)
+            {
+                var user = (from u in _repositoryUsers.Get()
+                            where (u.UserName == model.UserName)
+                            select u);
+                if (user.Any())
+                {
+                    ViewBag.ErrorMessage = "El nombre de usuario ya esta ocupado";
+                    return View("Register", model);
+                }
+                else
+                {
+                    model.Active = true;
+                    _repositoryUsers.Add(model);
+                    _repositoryUsers.Save();
+                    return View("Index");
+                }
+            }
+            else
+            {
+                ViewBag.ErrorMessage = "Los datos no son validos";
+                return View("Register");
+            }
         }
 
         [HttpPost]
@@ -79,7 +100,13 @@ namespace Potentiostat.Controllers
                             select u);
                 if (user.Any())
                 {
-                    return Redirect("Home");
+                    if (user.FirstOrDefault().Active)
+                        return Redirect("Home");
+                    else
+                    {
+                        ViewBag.ErrorMessage = "El usuario no se encuentra activo.";
+                        return View("Index", model);
+                    }
                 }
                 else
                 {
