@@ -17,6 +17,7 @@ namespace Potentiostat.Controllers
     {
         private readonly IRepository<User> _repositoryUsers;
         private readonly IRepository<Device> _repositoryDevices;
+        private User _currentUser;
         public HomeController(IRepository<User> repositoryUsers, IRepository<Device> repositoryDevices)
         {
             _repositoryUsers = repositoryUsers;
@@ -101,28 +102,36 @@ namespace Potentiostat.Controllers
                 if (user.Any())
                 {
                     if (user.FirstOrDefault().Active)
+                    {
+                        _currentUser = user.FirstOrDefault();
                         return Redirect("Home");
+                    }
                     else
                     {
+                        _currentUser = null;
                         ViewBag.ErrorMessage = "El usuario no se encuentra activo.";
                         return View("Index", model);
                     }
                 }
                 else
                 {
+                    _currentUser = null;
                     ViewBag.ErrorMessage = "El usuario o contraseña son incorrectos";
                     return View("Index", model);
                 }
             }
             else
             {
+                _currentUser = null;
                 ViewBag.ErrorMessage = "El usuario o contraseña son incorrectos";
                 return View("Index");
             }
         }
-
+        [HttpGet]
         public IActionResult Home()
         {
+            ViewBag.userId = _currentUser?.Id;
+
             IEnumerable<Device> model = _repositoryDevices.Get();
             return View(model);
         }
@@ -133,6 +142,7 @@ namespace Potentiostat.Controllers
         }
         public IActionResult Potentiostat(Device model)
         {
+
             return View(model);
         }
 
