@@ -19,21 +19,20 @@
 }
 
 .box {
-    width: 300px;  
+    width: 300px;
     text-align: center;
     border-radius: 40px;
 }
 
 .box h1 {
     font-family: 'Roboto', sans-serif;
-    font-weight: 200;  
+    font-weight: 200;
 }
 
 .box input {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     line-height: initial;
-
 }
 
 .box input[type = "text"], .box input[type = "password"] {
@@ -51,16 +50,16 @@
     transition: 0.25s;
 }
 
-.box input[type = "text"]::placeholder,.box input[type = "password"]::placeholder{
+.box input[type = "text"]::placeholder, .box input[type = "password"]::placeholder {
     color: #999999;
 }
 
-.box input[type = "text"]:focus,.box input[type = "password"]:focus{
+.box input[type = "text"]:focus, .box input[type = "password"]:focus {
     width: 280px;
     border-color: #41D3BD;
 }
 
-.box input[type="submit"]{
+.box input[type="submit"], .box input[type="button"] {
     font-weight: bold;
     border: 0;
     background: none;
@@ -78,7 +77,7 @@
     color: #216869;
 }
 
-.box input[type="submit"]:hover{
+.box input[type="submit"]:hover, .box input[type="button"]:hover {
     background: #41D3BD;
     color: #FFFFF2;
 }

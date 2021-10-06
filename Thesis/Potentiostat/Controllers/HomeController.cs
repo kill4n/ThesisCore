@@ -8,26 +8,64 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Thesis.Models.Data;
+using Thesis.Repository;
 
 namespace Potentiostat.Controllers
 {
     public class HomeController : Controller
     {
-        private List<UserViewModel> _usuarios = new List<UserViewModel>()
+        private readonly IRepository<User> _repositoryUsers;
+        private readonly IRepository<Device> _repositoryDevices;
+        public HomeController(IRepository<User> repositoryUsers, IRepository<Device> repositoryDevices)
         {
-            new UserViewModel(){
-            User="csegura",
-            Password="12345"
+            _repositoryUsers = repositoryUsers;
+            _repositoryDevices = repositoryDevices;
+
+            var users = _repositoryUsers.Get();
+            if (!users.Any())
+            {
+                User user = new User()
+                {
+                    UserName = "csegura",
+                    Password = "12345",
+                    Email = "cc.segura@uniandes.edu.co",
+                    Active = true,
+                    State = true
+                };
+                _repositoryUsers.Add(user);
+                _repositoryUsers.Save();
             }
-        };
-        private readonly ILogger<HomeController> _logger;
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
+            var devices = _repositoryDevices.Get();
+            if (!devices.Any())
+            {
+                Device device = new Device()
+                {
+                    Name = "Potentiostat",
+                    State = 0,
+                    UsedBy = 0
+                };
+                _repositoryDevices.Add(device);
+                _repositoryDevices.Save();
+            }
+
         }
+
         public IActionResult Index()
         {
             return View(new UserViewModel());
+        }
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Register(User model)
+        {
+
+            return View();
         }
 
         [HttpPost]
@@ -36,8 +74,8 @@ namespace Potentiostat.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = (from u in _usuarios
-                            where (u.User == model.User) && (u.Password == model.Password)
+                var user = (from u in _repositoryUsers.Get()
+                            where (u.UserName == model.User) && (u.Password == model.Password)
                             select u);
                 if (user.Any())
                 {
@@ -58,17 +96,17 @@ namespace Potentiostat.Controllers
 
         public IActionResult Home()
         {
-
-            return View();
+            IEnumerable<Device> model = _repositoryDevices.Get();
+            return View(model);
         }
 
         public IActionResult Privacy()
         {
             return View();
         }
-        public IActionResult Potentiostat()
+        public IActionResult Potentiostat(Device model)
         {
-            return View();
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

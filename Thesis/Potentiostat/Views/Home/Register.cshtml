@@ -1,6 +1,7 @@
-﻿@model UserViewModel
+﻿@using Thesis.Models.Data
+@model User
 @{
-    ViewData["Title"] = "Login Page";
+    ViewData["Title"] = "Register";
 }
 
 <link rel="stylesheet" href="~/css/Login.css" />
@@ -15,28 +16,31 @@
             <img src="~/img/logo-blanco.png" class="App-logo" alt="logo" />
         </div>
         <div class="box">
-            @using (Html.BeginForm("Login", "Home", FormMethod.Post))
+            @using (Html.BeginForm("Register", "Home", FormMethod.Post))
             {
                 @Html.ValidationSummary(true)
                 @Html.Hidden("Redirect", Url.Action("Register", "Home"));
                 @Html.AntiForgeryToken()
 
-                <h1>Login</h1>
+                <h1>Register</h1>
                 @if (ViewBag.ErrorMessage != null)
                 {
                     <div class="alert alert-danger" role="alert">
                         @ViewBag.ErrorMessage
                     </div>
                 }
-                @Html.TextBoxFor((m) => m.User)
-                @Html.ValidationMessageFor((m) => m.User)
+                @Html.TextBoxFor((m) => m.UserName)
+                @Html.ValidationMessageFor((m) => m.UserName)
 
                 @Html.PasswordFor((m) => m.Password)
                 @Html.ValidationMessageFor((m) => m.Password)
 
+                @Html.TextBoxFor((m) => m.Email)
+                @Html.ValidationMessageFor((m) => m.Email)
 
-                <input type="submit" value="Login" />
-                <input type="button" id="regisrer" value="Sign up" />
+
+                <input type="submit" value="Accept" />
+                <input type="button" id="back" value="Cancel" />
             }
         </div>
     </div>

@@ -1,4 +1,5 @@
-﻿
+﻿@using Thesis.Models.Data
+@model Device
 @{
     ViewData["Title"] = "Potentiostat";
 }
@@ -15,7 +16,7 @@
             <img src="~/img/B10msBlanco.png" class="App-logo" alt="logo" />
         </div>
         <div class="col-md-12 col-lg-6">
-            <h2> Potentiostat</h2>
+            <h2> @Model.Name  </h2>
         </div>
     </div>
 

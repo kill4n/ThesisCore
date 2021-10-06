@@ -1,4 +1,6 @@
-﻿@{
+﻿@using Thesis.Models.Data
+@model IEnumerable<Device>
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -10,7 +12,7 @@
         <h1> | Remote devices</h1>
     </div>
     <h1 id="title">Remote devices</h1>
-    @Html.Hidden("RedirectTo", Url.Action("Potentiostat", "Home"));
+    @Html.Hidden("RedirectTo", Url.Action("Potentiostat", "Home", Model.Where(m => m.Name == "Potentiostat").FirstOrDefault()));
 
     <div class="container-card">
         <div class="card">
@@ -19,7 +21,7 @@
             </div>
             <div class="content">
                 <div>
-                    <h3>Potentiostato</h3>
+                    <h3>@Model.FirstOrDefault()?.Name</h3>
                     <p>Dispositivo para realizar mediciones electroquimicas.</p>
                     <a id="Potentiostat">Acceder</a>
                 </div>
