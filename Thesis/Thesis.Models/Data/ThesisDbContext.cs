@@ -12,7 +12,7 @@ namespace Thesis.Models.Data
         {
             var folder = Environment.SpecialFolder.LocalApplicationData;
             var path = Environment.GetFolderPath(folder);
-            DbPath = $"{path}{System.IO.Path.DirectorySeparatorChar}{database}";
+            DbPath = $"C:/db{System.IO.Path.DirectorySeparatorChar}{database}";
         }
 
         public DbSet<User> Users { get; set; }
