@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Potentiostat.Models;
@@ -18,11 +19,12 @@ namespace Potentiostat.Controllers
         private readonly IRepository<User> _repositoryUsers;
         private readonly IRepository<Device> _repositoryDevices;
         private User _currentUser;
-        public HomeController(IRepository<User> repositoryUsers, IRepository<Device> repositoryDevices)
+        private IConfiguration _configuration;
+        public HomeController(IRepository<User> repositoryUsers, IRepository<Device> repositoryDevices, IConfiguration configuration)
         {
             _repositoryUsers = repositoryUsers;
             _repositoryDevices = repositoryDevices;
-
+            _configuration = configuration;
             var users = _repositoryUsers.Get();
             if (!users.Any())
             {
@@ -104,7 +106,7 @@ namespace Potentiostat.Controllers
                     if (user.FirstOrDefault().Active)
                     {
                         _currentUser = user.FirstOrDefault();
-                        return Redirect("Home");
+                        return RedirectToAction("Home", new { id = _currentUser.Id });
                     }
                     else
                     {
@@ -128,11 +130,30 @@ namespace Potentiostat.Controllers
             }
         }
         [HttpGet]
-        public IActionResult Home()
+        public IActionResult Home(long id)
         {
-            ViewBag.userId = _currentUser?.Id;
-
+            ViewBag.userId = id;
             IEnumerable<Device> model = _repositoryDevices.Get();
+            DateTime ahora = DateTime.Now;
+            foreach (var device in model)
+            {
+                if (device.LastUsed != null)
+                {
+                    if (((TimeSpan)(ahora - device.LastUsed)).TotalMinutes >= _configuration.GetValue<int>("SessionTimeout"))
+                    {
+                        device.LastUsed = null;
+                        device.UsedBy = 0;
+                        _repositoryDevices.Update(device);
+                        _repositoryDevices.Save();
+                    }
+                }
+                else
+                {
+                    device.UsedBy = 0;
+                    _repositoryDevices.Update(device);
+                    _repositoryDevices.Save();
+                }
+            }
             return View(model);
         }
 
@@ -140,10 +161,35 @@ namespace Potentiostat.Controllers
         {
             return View();
         }
-        public IActionResult Potentiostat(Device model)
+        public IActionResult Potentiostat(long idDevice, long idUser)
         {
+            Device model = _repositoryDevices.Get(idDevice);
+            //Check if the user is logged to prevent entering 
+            if ((model.UsedBy == 0) | (model.UsedBy == idUser))
+            {
+                model.UsedBy = idUser;
+                model.LastUsed = DateTime.Now;
+                _repositoryDevices.Update(model);
+                _repositoryDevices.Save();
+                return View(model);
+            }
+            else
+            {
+                DateTime ahora = DateTime.Now;
+                if (((TimeSpan)(ahora - model.LastUsed)).TotalMinutes >= _configuration.GetValue<int>("SessionTimeout"))
+                {
+                    model.UsedBy = idUser;
+                    model.LastUsed = DateTime.Now;
+                    _repositoryDevices.Update(model);
+                    _repositoryDevices.Save();
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("Home", new { id = idUser });
+                }
+            }
 
-            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

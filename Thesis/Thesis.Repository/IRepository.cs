@@ -8,9 +8,9 @@ namespace Thesis.Repository
     public interface IRepository<TEntity>
     {
         IEnumerable<TEntity> Get();
-        TEntity Get(int id);
+        TEntity Get(long id);
         void Add(TEntity data);
-        void Delete(int id);
+        void Delete(long id);
         void Update(TEntity data);
         void Save();
     }

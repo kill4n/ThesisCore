@@ -19,7 +19,7 @@ namespace Thesis.Repository
         {
             _dbSet.Add(data);
         }
-        public void Delete(int id)
+        public void Delete(long id)
         {
             TEntity dataToDelete = _dbSet.Find(id);
             _dbSet.Remove(dataToDelete);
@@ -28,7 +28,7 @@ namespace Thesis.Repository
         {
             return _dbSet.ToList();
         }
-        public TEntity Get(int id)
+        public TEntity Get(long id)
         {
             return _dbSet.Find(id);
         }

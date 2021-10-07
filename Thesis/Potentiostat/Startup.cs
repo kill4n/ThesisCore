@@ -33,7 +33,7 @@ namespace Potentiostat
             services.AddSignalR();
 
             services.AddDbContext<ThesisDbContext>();
-
+            services.AddSingleton(Configuration);
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
 

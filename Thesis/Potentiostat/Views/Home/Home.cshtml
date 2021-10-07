@@ -9,20 +9,20 @@
 <div class="body-container">
     <div class="logo">
         <img src="~/img/B10msBlanco.png" class="App-logo" alt="logo" />
-        <h1> | Remote devices @ViewBag.userId</h1>
+        <h1> | Remote devices </h1>
     </div>
     <h1 id="title">Remote devices</h1>
-    @Html.Hidden("RedirectTo", Url.Action("Potentiostat", "Home", Model.Where(m => m.Name == "Potentiostat").FirstOrDefault()));
+    @Html.Hidden("RedirectTo", Url.Action("Potentiostat", "Home", new { idDevice = Model.Where(m => m.Name == "Potentiostat").FirstOrDefault().Id, idUser = ViewBag.userId }));
     <div class="container-card">
         <div class="card">
-            <div class="imgBx" data-text="Potentiostato">
+            <div class="imgBx" data-text="@Model.FirstOrDefault()?.Name">
                 <img src="~/img/design.png" />
             </div>
             <div class="content">
                 <div>
                     <h3>@Model.FirstOrDefault()?.Name</h3>
                     <p>Dispositivo para realizar mediciones electroquimicas.</p>
-                    <button id="Potentiostat">@(Model.FirstOrDefault().UsedBy== 0 ? "Open" : "Busy")</button>
+                    <button id="Potentiostat">@((Model.FirstOrDefault().UsedBy == 0)||(Model.FirstOrDefault().UsedBy == ViewBag.userId) ? "Open" : "Busy")</button>
                 </div>
             </div>
         </div>
@@ -46,7 +46,7 @@
                 <div>
                     <h3>Equipo de laboratorio</h3>
                     <p>Breve descripcion del equipo de laboratorio.</p>
-                    <a href="#">Acceder</a>
+                    <button href="#">Acceder</button>
                 </div>
             </div>
         </div>
@@ -58,7 +58,7 @@
                 <div>
                     <h3>Otros.</h3>
                     <p>Cualquier otra información adicional.</p>
-                    <a href="#">Acceder</a>
+                    <button href="#">Acceder</button>
                 </div>
             </div>
         </div>
@@ -70,7 +70,10 @@
 
 <script type="text/javascript">
     $('#Potentiostat').click(() => {
-        var url = $("#RedirectTo").val();
-        window.location.href = url;
+        if ($('#Potentiostat').val() =="Open") {
+            var url = $("#RedirectTo").val();
+            window.location.href = url;
+        }
+    
     });
 </script>
