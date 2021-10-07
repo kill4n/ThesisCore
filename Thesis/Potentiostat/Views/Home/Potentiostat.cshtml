@@ -123,6 +123,7 @@
             .catch((err) => {
                 return console.error(err.toString());
             });
+        updateDevice();
     });
 
     $('#startAction').click(() => {
@@ -131,6 +132,7 @@
             .catch((err) => {
                 return console.error(err.toString());
             });
+        updateDevice();
     });
 
     $('#stopAction').click(() => {
@@ -138,6 +140,7 @@
             .catch((err) => {
                 return console.error(err.toString());
             });
+        updateDevice();
     });
 
     $('#clearAction').click(() => {
@@ -145,8 +148,14 @@
             .catch((err) => {
                 return console.error(err.toString());
             });
+        updateDevice();
+        console.log("Call Clear");
+        data = new google.visualization.DataTable();
+        data.addColumn('number', 'Voltage');
+        data.addColumn('number', 'Current');
+        // format numbers in second column to 5 decimals
+        drawChart();
     });
-
 
 
     // Load the Visualization API and the corechart package.
@@ -171,16 +180,6 @@
         data.addColumn('number', 'Current');
         drawChart();
     }
-
-
-    $('#clearAction').click(() => {
-        console.log("Call Clear");
-        data = new google.visualization.DataTable();
-        data.addColumn('number', 'Voltage');
-        data.addColumn('number', 'Current');
-        // format numbers in second column to 5 decimals
-        drawChart();
-    });
 
     connection.on("RecieveData", (voltage, current) => {
         console.log("V: " + voltage + "(" + parseFloat(voltage) + ")" + " C: " + current);
@@ -220,6 +219,7 @@
     }
 
     $('#export').click((e) => {
+        updateDevice();
         console.log("Call export");
         e.preventDefault();
         var csvColumns;
@@ -262,5 +262,17 @@
         console.log(csvContent);
     });
 
-
+    function updateDevice() {
+        $.ajax({
+            type: "Post",
+            url: "@Url.Action("UpdateDate", "Home")",
+            data: { idDevice:'@ViewBag.deviceId',  idUser: '@ViewBag.userId' },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log('in error');
+            }
+        });
+    }
 </script>

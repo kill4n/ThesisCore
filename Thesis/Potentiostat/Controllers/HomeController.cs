@@ -163,6 +163,9 @@ namespace Potentiostat.Controllers
         }
         public IActionResult Potentiostat(long idDevice, long idUser)
         {
+            ViewBag.userId = idUser;
+            ViewBag.deviceId = idDevice;
+
             Device model = _repositoryDevices.Get(idDevice);
             //Check if the user is logged to prevent entering 
             if ((model.UsedBy == 0) | (model.UsedBy == idUser))
@@ -190,6 +193,16 @@ namespace Potentiostat.Controllers
                 }
             }
 
+        }
+        [HttpPost]
+        public IActionResult UpdateDate(long idDevice, long idUser)
+        {
+            Device model = _repositoryDevices.Get(idDevice);
+            model.LastUsed = DateTime.Now;
+            _repositoryDevices.Update(model);
+            _repositoryDevices.Save();
+
+            return Ok("Sucess UpdateDate");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
