@@ -32,8 +32,9 @@ namespace Potentiostat
             services.AddControllersWithViews();
             services.AddSignalR();
 
-            services.AddDbContext<ThesisDbContext>();
+            services.AddDbContext<ThesisDbContext>(options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddSingleton(Configuration);
+            Console.WriteLine("inside conf");
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         }
 
