@@ -13,9 +13,10 @@
     </div>
     <h1 id="title">Remote devices</h1>
     @Html.Hidden("RedirectTo", Url.Action("Potentiostat", "Home", new { idDevice = Model.Where(m => m.Name == "Potentiostat").FirstOrDefault().Id, idUser = ViewBag.userId }));
+     @Html.Hidden("RedirectToIA", Url.Action("ImpedanceAnalyzer", "Home", new { idDevice = Model.Where(m => m.Id == 2).FirstOrDefault().Id, idUser = ViewBag.userId }));
     <div class="container-card">
         <div class="card">
-            <div class="imgBx" data-text="@Model.FirstOrDefault()?.Name">
+            <div class="imgBx" data-text="@Model.FirstOrDefault(x=> x.Id==1)?.Name">
                 <img src="~/img/design.png" />
             </div>
             <div class="content">
@@ -27,14 +28,14 @@
             </div>
         </div>
         <div class="card">
-            <div class="imgBx" data-text="Analizador">
+            <div class="imgBx" data-text="@Model.FirstOrDefault(x=> x.Id==2)?.Name">
                 <img src="~/img/design.png" />
             </div>
             <div class="content">
                 <div>
-                    <h3>Analizador de Impedancias</h3>
+                    <h3>@Model.FirstOrDefault(x=> x.Id==2)?.Name</h3>
                     <p>Descripción de analizador de impedancias.</p>
-                    <button>Acceder</button>
+                    <button id="ImpedanceAnalyzer">@((Model.FirstOrDefault(x=> x.Id == 2)?.UsedBy==0)||(Model.FirstOrDefault(x=> x.Id == 2).UsedBy == ViewBag.userId) ? "Open" : "Busy")</button>
                 </div>
             </div>
         </div>
@@ -74,6 +75,13 @@
             var url = $("#RedirectTo").val();
             window.location.href = url;
         }
-    
+
+    });
+    $('#ImpedanceAnalyzer').click(()=>{
+        if($('#ImpedanceAnalyzer').text()=="Open"){
+            var url = $("#RedirectToIA").val();
+            console.log(url);
+            window.location.href = url;
+        }
     });
 </script>

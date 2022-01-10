@@ -192,8 +192,41 @@ namespace Potentiostat.Controllers
                     return RedirectToAction("Home", new { id = idUser });
                 }
             }
-
         }
+
+        public IActionResult ImpedanceAnalyzer(long idDevice, long idUser)
+        {
+            ViewBag.userId = idUser;
+            ViewBag.deviceId = idDevice;
+
+            Device model = _repositoryDevices.Get(idDevice);
+            //Check if the user is logged to prevent entering 
+            if ((model.UsedBy == 0) | (model.UsedBy == idUser))
+            {
+                model.UsedBy = idUser;
+                model.LastUsed = DateTime.Now;
+                _repositoryDevices.Update(model);
+                _repositoryDevices.Save();
+                return View(model);
+            }
+            else
+            {
+                DateTime ahora = DateTime.Now;
+                if (((TimeSpan)(ahora - model.LastUsed)).TotalMinutes >= _configuration.GetValue<int>("SessionTimeout"))
+                {
+                    model.UsedBy = idUser;
+                    model.LastUsed = DateTime.Now;
+                    _repositoryDevices.Update(model);
+                    _repositoryDevices.Save();
+                    return View(model);
+                }
+                else
+                {
+                    return RedirectToAction("Home", new { id = idUser });
+                }
+            }
+        }
+
         [HttpPost]
         public IActionResult UpdateDate(long idDevice, long idUser)
         {

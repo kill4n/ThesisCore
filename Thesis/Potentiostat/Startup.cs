@@ -64,6 +64,7 @@ namespace Potentiostat
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapHub<PotentiostatHub>("/potentiostathub");
+                endpoints.MapHub<ImpedanceAnalyzerHub>("/impedanceanalyzerhub");
             });
         }
     }

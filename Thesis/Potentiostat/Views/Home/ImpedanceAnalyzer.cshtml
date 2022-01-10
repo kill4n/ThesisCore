@@ -1,0 +1,207 @@
+﻿@using Thesis.Models.Data
+@model Device
+@{
+    ViewData["Title"] = "Impedance Analyzer";
+}
+@section Scripts
+{
+<partial name="_ValidationScriptsPartial" />
+}
+
+<link rel="stylesheet" href="~/css/Potentiostat.css" />
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<div class="container col-12">
+    <div class="logo row justify-content-center">
+        <div class="col-md-12 col-lg-6">
+            <img src="~/img/B10msBlanco.png" class="App-logo" alt="logo" />
+        </div>
+        <div class="col-md-12 col-lg-6">
+            <h2> @Model.Name </h2>
+        </div>
+    </div>
+
+    <div class="btn-group row">
+        <div class="col-sm-12 col-md-5 col-lg-2">
+            <input type="button" id="calibrateAction" value="Calibrate" />
+        </div>
+        <div class="col-sm-12 col-md-5 col-lg-2">
+            <input type="button" id="readAction" value="Read" />
+        </div>
+        <div class="col-sm-12 col-md-5 col-lg-2">
+            <input type="button" id="clearAction" value="Clear" />
+        </div>
+        <div class="col-sm-12 col-md-5 col-lg-2">
+            <input type="button" id="export" value="Export Data" />
+        </div>
+    </div>
+
+    <div class="charts-container row">
+        <div class="col-lg-10 col-sm-12">
+            <div id="chart"></div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var connection = new signalR.HubConnectionBuilder().withUrl("/impedanceanalyzerhub").build();
+    document.getElementById("calibrateAction").disabled = true;
+
+    connection.start()
+    .then(function () {
+        document.getElementById("calibrateAction").disabled = false;
+    })
+    .catch(function (err) {
+        return console.error(err.toString());
+    });
+
+    $('#calibrateAction').click(() => {
+        // envio de data
+        connection.invoke("SendAction", "Calibrate")
+            .catch((err) => {
+                return console.error(err.toString());
+            });
+        updateDevice();
+    });
+
+    $('#readAction').click(() => {
+        connection.invoke("SendAction", "Read")
+            .catch((err) => {
+                return console.error(err.toString());
+            });
+        updateDevice();
+    });
+
+    $('#clearAction').click(() => {
+        connection.invoke("SendAction", "Clear")
+            .catch((err) => {
+                return console.error(err.toString());
+            });
+        updateDevice();
+        console.log("Call Clear");
+        data = new google.visualization.DataTable();
+        data.addColumn('number', 'Frequency');
+        data.addColumn('number', 'Impedance');
+        // format numbers in second column to 5 decimals
+        drawChart();
+    });
+
+
+    // Load the Visualization API and the corechart package.
+    google.charts.load('current', {
+        callback: function () {
+            drawChart();
+            $(window).resize(drawChart);
+        },
+        packages: ['corechart']
+    });
+
+    // Set a callback to run when the Google Visualization API is loaded.
+
+    google.charts.setOnLoadCallback(loadedChart);
+
+    var data;//= new google.visualization.DataTable();
+
+    var exported = false;
+    function loadedChart() {
+        data = new google.visualization.DataTable();
+        data.addColumn('number', 'Frequency');
+        data.addColumn('number', 'Impedance');
+        drawChart();
+    }
+
+    connection.on("RecieveData", (Frequency, Impedance) => {
+        console.log("V: " + voltage + "(" + parseFloat(voltage) + ")" + " C: " + current);
+        data.addRow([parseFloat(voltage), parseFloat(current)]);
+        drawChart();
+        csvContent = google.visualization.dataTableToCsv(data);
+        console.log(csvContent);
+    });
+
+    // Callback that creates and populates a data table,
+    // instantiates the chart, passes in the data and
+    // draws it.
+    function drawChart() {
+        console.log("call drawChart");
+        // Set chart options
+        var options = {
+            title: 'Impedance vs Frequency',
+            hAxis: {
+                title: 'Frequency (Hz)'
+            },
+            vAxis: {
+                title: 'Impedance |Z| '
+            },
+            curveType: 'function',
+            chartArea: {
+                // leave room for y-axis labels
+                width: '85%'
+            },
+            height: 500,
+            legend: { position: 'none' }
+        };
+
+        // Instantiate and draw our chart, passing in some options.
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart'));
+        chart.draw(data, options);
+    }
+
+    $('#export').click((e) => {
+        updateDevice();
+        console.log("Call export");
+        e.preventDefault();
+        var csvColumns;
+        var csvContent;
+        var downloadLink;
+
+        // build column headings
+        csvColumns = '';
+        for (var i = 0; i < data.getNumberOfColumns(); i++) {
+            csvColumns += data.getColumnLabel(i);
+            if (i < (data.getNumberOfColumns() - 1)) {
+                csvColumns += ',';
+            }
+        }
+        csvColumns += '\n';
+        var formatter = new google.visualization.NumberFormat({
+            pattern: '#,##0.000000000000'
+        });
+        formatter.format(data, 0);
+        formatter.format(data, 1);
+        // get data rows
+        csvContent = csvColumns + google.visualization.dataTableToCsv(data);
+        csvContent = csvContent.replaceAll(',', ';');
+        csvContent = csvContent.replaceAll('.', ',');
+
+        var date = new Date();
+        var dateStr =
+            ("00" + (date.getMonth() + 1)).slice(-2) + "-" +
+            ("00" + date.getDate()).slice(-2) + "-" +
+            date.getFullYear() + "_" +
+            ("00" + date.getHours()).slice(-2) +
+            ("00" + date.getMinutes()).slice(-2) +
+            ("00" + date.getSeconds()).slice(-2);
+
+        downloadLink = document.createElement('a');
+        downloadLink.href = 'data:text/csv;charset=utf-8,' + encodeURI(csvContent);
+        downloadLink.download = 'export_data_' + dateStr + '.csv';
+        downloadLink.click();
+        downloadLink = null;
+        console.log(csvContent);
+    });
+
+    function updateDevice() {
+        $.ajax({
+            type: "Post",
+            url: "@Url.Action("UpdateDate", "Home")",
+            data: { idDevice:'@ViewBag.deviceId',  idUser: '@ViewBag.userId' },
+            success: function (response) {
+                console.log(response);
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                console.log('in error');
+            }
+        });
+    }
+</script>
